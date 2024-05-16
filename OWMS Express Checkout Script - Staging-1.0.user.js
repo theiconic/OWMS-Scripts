@@ -1,0 +1,77 @@
+// ==UserScript==
+// @name         OWMS Express Checkout Script - Staging
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Click buttons on key press
+// @author       Ashur Chamoun
+// @match        https://oms-staging-au.zalora.net/express-checkout/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    let inputBuffer = '';
+    let isLogging = false;
+
+    function processInput(input) {
+        console.log('Processing input:', input); // Debugging message
+        if (input === 'pack') {
+            var packItemButton = document.getElementById('pack_items_btn');
+            if (packItemButton) {
+                packItemButton.scrollIntoView();
+                packItemButton.click();
+                console.log('Clicked button1'); // Debugging message
+                var uidField = document.getElementById('scan-uid-to-check');
+                if (uidField) {
+                    console.log('UID textbox found'); // Debugging message
+                    uidField.scrollIntoView();
+                    console.log('Scrolled to UID textbox'); // Debugging message
+                    setTimeout(() => { // Adding a small delay to ensure visibility
+                        uidField.focus(); // Set focus to the text box
+                        console.log('Focused on UID textbox'); // Debugging message
+                    }, 200);
+                } else {
+                    console.log('UID textbox not found'); // Debugging message
+                }
+        }
+        }else if (input === 'packaging') {
+            var element2 = document.querySelector('[id*="packaging_"]');
+            if (element2) {
+                console.log('Packaging textbox found'); // Debugging message
+                element2.scrollIntoView();
+                console.log('Scrolled to packaging textbox'); // Debugging message
+                setTimeout(() => { // Adding a small delay to ensure visibility
+                    element2.focus(); // Set focus to the text box
+                    console.log('Focused on packaging textbox'); // Debugging message
+                }, 200);
+            } else {
+                console.log('Texbox not found'); // Debugging message
+            }
+        } else {
+            console.log('No matching input found'); // Debugging message
+        }
+    }
+        document.addEventListener('keydown', function(event) {
+        if (isLogging) {
+            if (event.key === 'Enter') {
+                processInput(inputBuffer.trim());
+                inputBuffer = ''; // Clear the buffer after processing
+                isLogging = false; // Stop logging after processing
+            } else {
+                inputBuffer += event.key;
+                console.log('Current input buffer:', inputBuffer); // Debugging message
+            }
+        } else {
+            inputBuffer += event.key;
+            if (inputBuffer.endsWith('*')) {
+                // Click off any current text box to prevent command input
+                document.activeElement.blur(); // Blur the currently focused element
+                document.body.click(); // Click the body to ensure no input is focused
+                isLogging = true;
+                inputBuffer = ''; // Clear the buffer after detecting the start sequence
+                console.log('Start sequence detected, logging input...'); // Debugging message
+            }
+        }
+    });
+})();
