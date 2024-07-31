@@ -8,7 +8,4 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
-    'use strict';
-
     
