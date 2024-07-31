@@ -1,2 +1,0 @@
-// ==UserScript==
-// @name         Backup script
